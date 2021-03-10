@@ -12,7 +12,7 @@
     <tbody>
     <tr v-for="(domain, index) in domains" :key="index">
       <td v-for="(key, index) in domainKeys" :key="index">
-        {{ domain[key] }}
+        <slot :name="key" :domain="domain" :index="index"/>
       </td>
     </tr>
     </tbody>
@@ -40,14 +40,15 @@ export default {
 
 <style scoped>
 table {
-  border: 2px solid #8ebc9f;
+  border: 1px solid #747678;
   border-radius: 3px;
-  background-color: #fff;
+  background-color: #eee;
   margin: 30px auto;
+  width: 1500px;
 }
 
 th {
-  background-color: #8ebc9f;
+  background-color: #747678;
   color: rgba(255, 255, 255, 1);
   cursor: pointer;
   -webkit-user-select: none;
@@ -58,12 +59,11 @@ th {
 
 td {
   background-color: #f9f9f9;
-  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 th,
 td {
-  min-width: 90px;
   max-width: 120px;
   padding: 10px 20px;
   font-size: 12px;

@@ -8,13 +8,59 @@
                   :domains="domainsList"
                   :domainColumns="domainColumns"
                   :domainKeys="domainKeys"
-    />
-    <p v-else>No data found</p>
-    <AppList :items="domainsList">
-      <template #item="{item}">
-        {{ item.domain }}
+    >
+      <template #domain="{domain}">
+        {{ domain.domain }}
       </template>
-    </AppList>
+      <template #create_date="{domain}">
+        {{ domain.create_date }}
+      </template>
+      <template #update_date="{domain}">
+        {{ domain.update_date }}
+      </template>
+      <template #country="{domain}">
+        {{ domain.country }}
+      </template>
+      <template #isDead="{domain}">
+        {{ domain.isDead }}
+      </template>
+      <template #A="{domain}">
+        <AppList v-if="domain.A" :items="domain.A">
+          <template #item="{item}">
+            {{ item }}
+          </template>
+        </AppList>
+      </template>
+      <template #NS="{domain}">
+        <AppList v-if="domain.NS" :items="domain.NS">
+          <template #item="{item}">
+            {{ item }}
+          </template>
+        </AppList>
+      </template>
+      <template #CNAME="{domain}">
+        <AppList v-if="domain.CNAME" :items="domain.CNAME">
+          <template #item="{item}">
+            {{ item }}
+          </template>
+        </AppList>
+      </template>
+      <template #MX="{domain}">
+        <AppList v-if="domain.MX" :items="domain.MX">
+          <template #item="{item}">
+            {{ item.exchange }}, {{ item.priority }}
+          </template>
+        </AppList>
+      </template>
+      <template #TXT="{domain}">
+        <AppList v-if="domain.TXT" :items="domain.TXT">
+          <template #item="{item}">
+            {{ item }}
+          </template>
+        </AppList>
+      </template>
+    </AppDataTable>
+    <p v-else>No data found</p>
   </div>
 </template>
 
@@ -62,10 +108,8 @@ export default {
     };
   },
   mounted() {
-    // eslint-disable-next-line no-undef
     axios
       .get('http://localhost:8080/v1/domains/search')
-      // eslint-disable-next-line no-return-assign
       .then((response) => {
         this.domainsList = response.data.domains;
         this.loading = false;

@@ -1,5 +1,5 @@
 <template>
-  <ul class="app-list">
+  <ol class="app-list">
     <li
       v-for="(item, index) in items"
       :key="index"
@@ -7,7 +7,7 @@
     >
       <slot name="item" :item="item" :index="index"/>
     </li>
-  </ul>
+  </ol>
 </template>
 
 <script>
@@ -23,8 +23,17 @@ export default {
 </script>
 
 <style>
+.app-list {
+  margin: 0;
+  padding: 0;
+}
+
 .app-list__item {
-  list-style-type: none;
-  cursor: pointer;
+  list-style: none;
+  margin-bottom: 10px;
+}
+
+.app-list__item:last-child {
+  margin-bottom: 0;
 }
 </style>
