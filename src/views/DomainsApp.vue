@@ -60,7 +60,7 @@
         </AppList>
       </template>
     </AppDataTable>
-    <p v-else>No data found</p>
+    <div v-else>No data found</div>
   </div>
 </template>
 
@@ -111,7 +111,29 @@ export default {
     axios
       .get('http://localhost:8080/v1/domains/search')
       .then((response) => {
-        this.domainsList = response.data.domains;
+        // eslint-disable-next-line no-return-assign,no-param-reassign
+        this.domainsList = response.data.domains.map((item) => {
+          // eslint-disable-next-line no-unused-expressions,no-param-reassign
+          item.country === null ? item.country = '-' : item.country;
+          // eslint-disable-next-line no-unused-expressions,no-param-reassign
+          item.A === null ? item.A = ['-'] : item.NS;
+          // eslint-disable-next-line no-unused-expressions,no-param-reassign
+          item.NS === null ? item.NS = ['-'] : item.NS;
+          // eslint-disable-next-line no-unused-expressions,no-param-reassign
+          item.CNAME === null ? item.CNAME = ['-'] : item.CNAME;
+          // eslint-disable-next-line no-unused-expressions,no-param-reassign
+          item.MX === null ? item.MX = [] : item.MX;
+          // const { MX } = item.MX;
+          // const exchange = item.MX.priority;
+          // eslint-disable-next-line no-unused-expressions,no-param-reassign
+          item.TXT === null ? item.TXT = ['-'] : item.TXT;
+          // console.log(MX[].exchange);
+          return item;
+        });
+        this.loading = false;
+      })
+      .catch((error) => {
+        console.log(error);
         this.loading = false;
       });
   },
