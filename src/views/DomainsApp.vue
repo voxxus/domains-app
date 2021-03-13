@@ -5,9 +5,9 @@
     </div>
     <Loader v-if="loading"/>
     <AppDataTable v-else-if="domainsList.length"
-                  :domains="domainsList"
-                  :domainColumns="domainColumns"
-                  :domainKeys="domainKeys"
+                  :data-list="domainsList"
+                  :data-columns="domainColumns"
+                  :data-keys="domainKeys"
     >
       <template #domain="{domain}">
         {{ domain.domain }}
@@ -48,7 +48,7 @@
       <template #MX="{domain}">
         <AppList v-if="domain.MX" :items="domain.MX">
           <template #item="{item}">
-            {{ item.exchange }}, {{ item.priority }}
+            {{ item.exchange }} - {{ item.priority }}
           </template>
         </AppList>
       </template>
@@ -60,7 +60,9 @@
         </AppList>
       </template>
     </AppDataTable>
-    <div v-else>No data found</div>
+    <EmptyList v-else>
+      <template #emptyList/>
+    </EmptyList>
   </div>
 </template>
 
@@ -68,6 +70,7 @@
 import AppList from '@/components/AppList.vue';
 import Loader from '@/components/Loader.vue';
 import AppDataTable from '@/components/AppDataTable.vue';
+import EmptyList from '@/components/EmptyList.vue';
 import axios from 'axios';
 
 export default {
@@ -76,6 +79,7 @@ export default {
     AppList,
     Loader,
     AppDataTable,
+    EmptyList,
   },
   data() {
     return {
@@ -113,6 +117,17 @@ export default {
       .then((response) => {
         // eslint-disable-next-line no-return-assign,no-param-reassign
         this.domainsList = response.data.domains.map((item) => {
+          // eslint-disable-next-line no-restricted-syntax,guard-for-in
+          // for (const key in this.domainKeys) {
+          //   if (typeof item[key] === 'string' && item[key] === null) {
+          //     // eslint-disable-next-line no-param-reassign
+          //     item[key] = '-';
+          //   }
+          //   if (typeof item[key] === 'object' && item[key] === null) {
+          //     // eslint-disable-next-line no-param-reassign
+          //     item[key] = ['-'];
+          //   }
+          // }
           // eslint-disable-next-line no-unused-expressions,no-param-reassign
           item.country === null ? item.country = '-' : item.country;
           // eslint-disable-next-line no-unused-expressions,no-param-reassign
@@ -122,9 +137,7 @@ export default {
           // eslint-disable-next-line no-unused-expressions,no-param-reassign
           item.CNAME === null ? item.CNAME = ['-'] : item.CNAME;
           // eslint-disable-next-line no-unused-expressions,no-param-reassign
-          item.MX === null ? item.MX = [] : item.MX;
-          // const { MX } = item.MX;
-          // const exchange = item.MX.priority;
+          item.MX === null ? item.MX = ['-'] : item.MX;
           // eslint-disable-next-line no-unused-expressions,no-param-reassign
           item.TXT === null ? item.TXT = ['-'] : item.TXT;
           // console.log(MX[].exchange);

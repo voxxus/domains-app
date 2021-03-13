@@ -2,31 +2,36 @@
   <div>
     <div class="data-input">
       <label for="search">
-        Поиск доменов:<input id="search" type="text" v-model="search">
+        Поиск доменов: <input id="search" v-model="search">
       </label>
     </div>
-    <table>
+    <table class="data-table">
       <thead>
       <tr>
-        <th v-for="(column, index) in domainColumns"
+        <th v-for="(column, index) in dataColumns"
             :key="index"
             @click="sort(column)"
+            class="data-table__header"
         >
           {{ column }}
         </th>
       </tr>
       </thead>
       <tbody>
-      <template v-if="filteredDomains.length">
-        <tr v-for="(domain, index) in filteredDomains" :key="index">
-          <td v-for="(key, index) in domainKeys" :key="index">
-            <slot :name="key" :domain="domain" :index="index"/>
+      <template v-if="filteredList.length">
+        <tr v-for="(listItem, index) in filteredList" :key="index">
+          <td v-for="(key, index) in dataKeys" :key="index" class="data-table__data">
+            <slot :name="key" :domain="listItem" :index="index"/>
           </td>
         </tr>
       </template>
       <template v-else>
         <tr>
-          <td :colspan="domainColumns.length">No data</td>
+          <td :colspan="dataColumns.length">
+            <EmptyList>
+              <template #emptyList/>
+            </EmptyList>
+          </td>
         </tr>
       </template>
       </tbody>
@@ -35,24 +40,30 @@
 </template>
 
 <script>
+import EmptyList from '@/components/EmptyList.vue';
+
 export default {
   data() {
     return {
       search: '',
+      searchMX: '',
       sortDir: 'asc',
       sortCol: 'Домен',
     };
   },
+  components: {
+    EmptyList,
+  },
   props: {
-    domains: {
+    dataList: {
       type: Array,
       default: () => [],
     },
-    domainColumns: {
+    dataColumns: {
       type: Array,
       default: () => [],
     },
-    domainKeys: {
+    dataKeys: {
       type: Array,
       default: () => [],
     },
@@ -64,7 +75,7 @@ export default {
       } else {
         this.sortCol = col;
       }
-      this.domains.sort(this.sortBy(col, this.sortDir));
+      this.dataList.sort(this.sortBy(col, this.sortDir));
     },
     sortBy(property, order) {
       this.sortDir = order;
@@ -82,21 +93,34 @@ export default {
     },
   },
   computed: {
-    filteredDomains() {
-      // eslint-disable-next-line array-callback-return,consistent-return
+    filteredList() {
       const searchStr = this.search.toLowerCase();
       // eslint-disable-next-line array-callback-return,consistent-return
-      return this.domains.filter((domain) => {
-        if (domain.domain.indexOf(searchStr) > -1
-          || domain.create_date.toLowerCase().indexOf(searchStr) > -1
-          || domain.update_date.toLowerCase().indexOf(searchStr) > -1
-          || domain.country.toLowerCase().indexOf(searchStr) > -1
-          || domain.isDead.toLowerCase().indexOf(searchStr) > -1
-          || domain.A.join(', ').indexOf(searchStr) > -1
-          || domain.NS.join(', ').indexOf(searchStr) > -1
-          || domain.CNAME.join(', ').indexOf(searchStr) > -1
-          || domain.TXT.join(', ').indexOf(searchStr) > -1) {
-          return domain;
+      return this.dataList.filter((item) => {
+        if (item.domain.indexOf(searchStr) > -1
+          || item.create_date.toLowerCase()
+            .indexOf(searchStr) > -1
+          || item.update_date.toLowerCase()
+            .indexOf(searchStr) > -1
+          || item.country.toLowerCase()
+            .indexOf(searchStr) > -1
+          || item.isDead.toLowerCase()
+            .indexOf(searchStr) > -1
+          || item.A.join(', ')
+            .indexOf(searchStr) > -1
+          || item.NS.join(', ')
+            .indexOf(searchStr) > -1
+          || item.CNAME.join(', ')
+            .indexOf(searchStr) > -1
+          || item.TXT.join(', ')
+            .indexOf(searchStr) > -1) {
+          return item;
+        }
+        // eslint-disable-next-line no-restricted-syntax,guard-for-in
+        for (const val in item.MX) {
+          if (Object.values(item.MX[val]).join(' - ').indexOf(searchStr) > -1) {
+            return item;
+          }
         }
       });
     },
@@ -104,35 +128,34 @@ export default {
 };
 </script>
 
-<style scoped>
-table {
+<style scoped lang="scss">
+.data-table {
   border: 1px solid #747678;
   border-radius: 3px;
   background-color: #eee;
   margin: 5px auto;
   width: 1500px;
-}
 
-th {
-  background-color: #747678;
-  color: rgba(255, 255, 255, 1);
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
+  &__header {
+    background-color: #747678;
+    color: rgba(255, 255, 255, 1);
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
 
-td {
-  background-color: #f9f9f9;
-  overflow-wrap: break-word;
-}
+  &__data {
+    background-color: #f9f9f9;
+    overflow-wrap: break-word;
+  }
 
-th,
-td {
-  max-width: 120px;
-  padding: 10px 20px;
-  font-size: 12px;
+  &__header, &__data {
+    max-width: 120px;
+    padding: 10px 20px;
+    font-size: 12px;
+  }
 }
 
 input {
