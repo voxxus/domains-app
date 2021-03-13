@@ -1,10 +1,5 @@
 <template>
   <div>
-    <div class="data-input">
-      <label for="search">
-        Поиск доменов: <input id="search" v-model="search">
-      </label>
-    </div>
     <table class="data-table">
       <thead>
       <tr>
@@ -43,10 +38,9 @@
 import EmptyList from '@/components/EmptyList.vue';
 
 export default {
+  name: 'AppDataTable',
   data() {
     return {
-      search: '',
-      searchMX: '',
       sortDir: 'asc',
       sortCol: 'Домен',
     };
@@ -67,6 +61,13 @@ export default {
       type: Array,
       default: () => [],
     },
+    search: {
+      type: String,
+      default: () => '',
+    },
+    filteredList: {
+      type: Function,
+    },
   },
   methods: {
     sort(col) {
@@ -75,7 +76,7 @@ export default {
       } else {
         this.sortCol = col;
       }
-      this.dataList.sort(this.sortBy(col, this.sortDir));
+      return this.dataList.sort(this.sortBy(col, this.sortDir));
     },
     sortBy(property, order) {
       this.sortDir = order;
@@ -93,37 +94,6 @@ export default {
     },
   },
   computed: {
-    filteredList() {
-      const searchStr = this.search.toLowerCase();
-      // eslint-disable-next-line array-callback-return,consistent-return
-      return this.dataList.filter((item) => {
-        if (item.domain.indexOf(searchStr) > -1
-          || item.create_date.toLowerCase()
-            .indexOf(searchStr) > -1
-          || item.update_date.toLowerCase()
-            .indexOf(searchStr) > -1
-          || item.country.toLowerCase()
-            .indexOf(searchStr) > -1
-          || item.isDead.toLowerCase()
-            .indexOf(searchStr) > -1
-          || item.A.join(', ')
-            .indexOf(searchStr) > -1
-          || item.NS.join(', ')
-            .indexOf(searchStr) > -1
-          || item.CNAME.join(', ')
-            .indexOf(searchStr) > -1
-          || item.TXT.join(', ')
-            .indexOf(searchStr) > -1) {
-          return item;
-        }
-        // eslint-disable-next-line no-restricted-syntax,guard-for-in
-        for (const val in item.MX) {
-          if (Object.values(item.MX[val]).join(' - ').indexOf(searchStr) > -1) {
-            return item;
-          }
-        }
-      });
-    },
   },
 };
 </script>
@@ -152,20 +122,10 @@ export default {
   }
 
   &__header, &__data {
+    min-width: 70px;
     max-width: 120px;
     padding: 10px 20px;
     font-size: 12px;
   }
-}
-
-input {
-  margin-top: 30px;
-  margin-left: 5px;
-  padding: 5px;
-}
-
-.data-input {
-  text-align: left;
-  margin-left: 10px;
 }
 </style>

@@ -13,6 +13,7 @@
 <script>
 
 export default {
+  name: 'AppList',
   props: {
     items: {
       type: Array,

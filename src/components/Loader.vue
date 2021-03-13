@@ -2,6 +2,12 @@
   <div class="lds-dual-ring"></div>
 </template>
 
+<script>
+export default {
+  name: 'Loader',
+};
+</script>
+
 <style>
 .lds-dual-ring {
   display: inline-block;
