@@ -11,11 +11,9 @@
         </label>
       </div>
       <AppDataTable
-        :data-list="domainsList"
+        :data-list="filteredDomains"
         :data-columns="domainColumns"
-        :data-keys="domainKeys"
-        :search="search"
-        :filtered-list="filteredDomains"
+        @sortColumn="sort"
       >
         <template #domain="{domain}">
           {{ domain.domain }}
@@ -94,31 +92,51 @@ export default {
     return {
       domainsList: null,
       domainColumns: [
-        'Домен',
-        'Дата создания',
-        'Дата обновления',
-        'Страна',
-        'Остановлен',
-        'Адрес',
-        'Имя сервера',
-        'Псевдоним',
-        'Почтовый адрес',
-        'Запись',
-      ],
-      domainKeys: [
-        'domain',
-        'create_date',
-        'update_date',
-        'country',
-        'isDead',
-        'A',
-        'NS',
-        'CNAME',
-        'MX',
-        'TXT',
+        {
+          key: 'domain',
+          value: 'Домен',
+        },
+        {
+          key: 'create_date',
+          value: 'Дата создания',
+        },
+        {
+          key: 'update_date',
+          value: 'Дата обновления',
+        },
+        {
+          key: 'country',
+          value: 'Страна',
+        },
+        {
+          key: 'isDead',
+          value: 'Остановлен',
+        },
+        {
+          key: 'A',
+          value: 'Адрес',
+        },
+        {
+          key: 'NS',
+          value: 'Имя сервера',
+        },
+        {
+          key: 'CNAME',
+          value: 'Псевдоним',
+        },
+        {
+          key: 'MX',
+          value: 'Почтовый адрес',
+        },
+        {
+          key: 'TXT',
+          value: 'Запись',
+        },
       ],
       loading: true,
       search: '',
+      sortDir: 'asc',
+      sortCol: 'domain',
     };
   },
   created() {
@@ -142,6 +160,28 @@ export default {
       });
   },
   methods: {
+    sort(col) {
+      if (this.sortCol === col) {
+        this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortCol = col;
+      }
+      return this.domainsList.sort(this.sortBy(col, this.sortDir));
+    },
+    sortBy(property, order) {
+      this.sortDir = order;
+      return function (a, b) {
+        const varA = typeof a[property] === 'string' ? a[property].toUpperCase() : a[property];
+        const varB = typeof b[property] === 'string' ? b[property].toUpperCase() : b[property];
+        let comparison = 0;
+        if (varA > varB) {
+          comparison = 1;
+        } else if (varA < varB) {
+          comparison = -1;
+        }
+        return order === 'desc' ? comparison * -1 : comparison;
+      };
+    },
   },
   computed: {
     filteredDomains() {

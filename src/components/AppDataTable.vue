@@ -3,20 +3,20 @@
     <table class="data-table">
       <thead>
       <tr>
-        <th v-for="(column, index) in dataKeys"
+        <th v-for="(column, index) in dataColumns"
             :key="index"
-            @click="sort(column)"
             class="data-table__header"
+            @click="$emit('sortColumn', column.key)"
         >
-          {{ column }}
+          {{ column.value }}
         </th>
       </tr>
       </thead>
       <tbody>
-      <template v-if="filteredList.length">
-        <tr v-for="(listItem, index) in filteredList" :key="index">
-          <td v-for="(key, index) in dataKeys" :key="index" class="data-table__data">
-            <slot :name="key" :domain="listItem" :index="index"/>
+      <template v-if="dataList.length">
+        <tr v-for="(listItem, index) in dataList" :key="index">
+          <td v-for="(column, index) in dataColumns" :key="index" class="data-table__data">
+            <slot :name="column.key" :domain="listItem" :index="index"/>
           </td>
         </tr>
       </template>
@@ -39,12 +39,6 @@ import EmptyList from '@/components/EmptyList.vue';
 
 export default {
   name: 'AppDataTable',
-  data() {
-    return {
-      sortDir: 'asc',
-      sortCol: 'Домен',
-    };
-  },
   components: {
     EmptyList,
   },
@@ -57,44 +51,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    dataKeys: {
-      type: Array,
-      default: () => [],
-    },
-    search: {
-      type: String,
-      default: () => '',
-    },
-    filteredList: {
-      type: Array,
-      default: () => [],
-    },
-  },
-  methods: {
-    sort(col) {
-      if (this.sortCol === col) {
-        this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
-      } else {
-        this.sortCol = col;
-      }
-      return this.dataList.sort(this.sortBy(col, this.sortDir));
-    },
-    sortBy(property, order) {
-      this.sortDir = order;
-      return function (a, b) {
-        const varA = typeof a[property] === 'string' ? a[property].toUpperCase() : a[property];
-        const varB = typeof b[property] === 'string' ? b[property].toUpperCase() : b[property];
-        let comparison = 0;
-        if (varA > varB) {
-          comparison = 1;
-        } else if (varA < varB) {
-          comparison = -1;
-        }
-        return order === 'desc' ? comparison * -1 : comparison;
-      };
-    },
-  },
-  computed: {
   },
 };
 </script>
