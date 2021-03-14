@@ -6,9 +6,13 @@
         <th v-for="(column, index) in dataColumns"
             :key="index"
             class="data-table__header"
+            :class="{active: sortKey === column.key}"
             @click="$emit('sortColumn', column.key)"
         >
           {{ column.value }}
+          <span class="data-table__arrow"
+                :class="{asc: sortDir === 'asc' && sortKey === column.key,
+                desc: sortDir === 'desc' && sortKey === column.key }"></span>
         </th>
       </tr>
       </thead>
@@ -51,11 +55,20 @@ export default {
       type: Array,
       default: () => [],
     },
+    sortKey: {
+      type: String,
+      default: () => '',
+    },
+    sortDir: {
+      type: String,
+      default: () => '',
+    },
   },
 };
 </script>
 
 <style scoped lang="scss">
+
 .data-table {
   border: 1px solid #747678;
   border-radius: 3px;
@@ -65,12 +78,42 @@ export default {
 
   &__header {
     background-color: #747678;
-    color: rgba(255, 255, 255, 1);
+    color: rgba(255, 255, 255, 0.66);
     cursor: pointer;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    width: 150px;
+  }
+
+  &__arrow {
+    display: inline-block;
+    vertical-align: middle;
+    width: 0;
+    height: 0;
+    margin-left: 5px;
+    opacity: 0.66;
+  }
+
+  &__arrow.asc {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 4px solid #fff;
+  }
+
+  &__arrow.desc {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #fff;
+  }
+
+  .active {
+    color: rgba(255, 255, 255, 1);
+  }
+
+  .active .data-table__arrow {
+    opacity: 1;
   }
 
   &__data {
@@ -81,7 +124,7 @@ export default {
   &__header, &__data {
     min-width: 70px;
     max-width: 120px;
-    padding: 10px 20px;
+    padding: 10px;
     font-size: 12px;
   }
 }

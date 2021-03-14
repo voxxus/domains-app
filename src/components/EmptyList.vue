@@ -5,7 +5,7 @@
 </template>
 
 <style scoped lang="scss">
-  .empty {
-    margin: 20px auto;
-  }
+.empty {
+  margin: 20px auto;
+}
 </style>

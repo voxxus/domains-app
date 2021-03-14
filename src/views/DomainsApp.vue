@@ -13,6 +13,8 @@
       <AppDataTable
         :data-list="filteredDomains"
         :data-columns="domainColumns"
+        :sort-key="sortKey"
+        :sort-dir="sortDirection"
         @sortColumn="sort"
       >
         <template #domain="{domain}">
@@ -135,8 +137,8 @@ export default {
       ],
       loading: true,
       search: '',
-      sortDir: 'asc',
-      sortCol: 'domain',
+      sortDirection: 'asc',
+      sortKey: '',
     };
   },
   created() {
@@ -161,15 +163,15 @@ export default {
   },
   methods: {
     sort(col) {
-      if (this.sortCol === col) {
-        this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+      if (this.sortKey === col) {
+        this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
       } else {
-        this.sortCol = col;
+        this.sortKey = col;
       }
-      return this.domainsList.sort(this.sortBy(col, this.sortDir));
+      return this.domainsList.sort(this.sortBy(col, this.sortDirection));
     },
     sortBy(property, order) {
-      this.sortDir = order;
+      this.sortDirection = order;
       return function (a, b) {
         const varA = typeof a[property] === 'string' ? a[property].toUpperCase() : a[property];
         const varB = typeof b[property] === 'string' ? b[property].toUpperCase() : b[property];
