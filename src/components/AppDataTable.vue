@@ -3,7 +3,7 @@
     <table class="data-table">
       <thead>
       <tr>
-        <th v-for="(column, index) in dataColumns"
+        <th v-for="(column, index) in dataKeys"
             :key="index"
             @click="sort(column)"
             class="data-table__header"
@@ -66,7 +66,8 @@ export default {
       default: () => '',
     },
     filteredList: {
-      type: Function,
+      type: Array,
+      default: () => [],
     },
   },
   methods: {

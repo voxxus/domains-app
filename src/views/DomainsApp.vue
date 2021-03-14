@@ -125,21 +125,13 @@ export default {
     axios
       .get('http://localhost:8080/v1/domains/search')
       .then((response) => {
-        // eslint-disable-next-line no-return-assign,no-param-reassign
         this.domainsList = response.data.domains.map((item) => {
-          // eslint-disable-next-line no-unused-expressions,no-param-reassign
           item.country === null ? item.country = '-' : item.country;
-          // eslint-disable-next-line no-unused-expressions,no-param-reassign
           item.A === null ? item.A = ['-'] : item.NS;
-          // eslint-disable-next-line no-unused-expressions,no-param-reassign
           item.NS === null ? item.NS = ['-'] : item.NS;
-          // eslint-disable-next-line no-unused-expressions,no-param-reassign
           item.CNAME === null ? item.CNAME = ['-'] : item.CNAME;
-          // eslint-disable-next-line no-unused-expressions,no-param-reassign
           item.MX === null ? item.MX = ['-'] : item.MX;
-          // eslint-disable-next-line no-unused-expressions,no-param-reassign
           item.TXT === null ? item.TXT = ['-'] : item.TXT;
-          // console.log(MX[].exchange);
           return item;
         });
         this.loading = false;
@@ -149,10 +141,12 @@ export default {
         this.loading = false;
       });
   },
+  methods: {
+  },
   computed: {
     filteredDomains() {
       const searchStr = this.search.toLowerCase();
-      // eslint-disable-next-line array-callback-return,consistent-return
+      // eslint-disable-next-line consistent-return
       return this.domainsList.filter((item) => {
         if (item.domain.indexOf(searchStr) > -1
           || item.create_date.toLowerCase()
@@ -173,7 +167,7 @@ export default {
             .indexOf(searchStr) > -1) {
           return item;
         }
-        // eslint-disable-next-line no-restricted-syntax,guard-for-in
+        // eslint-disable-next-line no-restricted-syntax
         for (const val in item.MX) {
           if (Object.values(item.MX[val])
             .join(' - ')
