@@ -6,8 +6,8 @@
         <th v-for="(column, index) in dataColumns"
             :key="index"
             class="data-table__header"
-            :class="{active: sortKey === column.key}"
-            @click="$emit('sortColumn', column.key)"
+            :class="{active: sortKey === column.key, sortable: column.isSortable}"
+            @click="$emit('sortColumn', index)"
         >
           {{ column.value }}
           <span class="data-table__arrow"
@@ -79,7 +79,6 @@ export default {
   &__header {
     background-color: #747678;
     color: rgba(255, 255, 255, 0.66);
-    cursor: pointer;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -110,6 +109,10 @@ export default {
 
   .active {
     color: rgba(255, 255, 255, 1);
+  }
+
+  .sortable {
+    cursor: pointer;
   }
 
   .active .data-table__arrow {

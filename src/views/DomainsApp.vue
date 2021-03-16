@@ -97,42 +97,52 @@ export default {
         {
           key: 'domain',
           value: 'Домен',
+          isSortable: true,
         },
         {
           key: 'create_date',
           value: 'Дата создания',
+          isSortable: true,
         },
         {
           key: 'update_date',
           value: 'Дата обновления',
+          isSortable: true,
         },
         {
           key: 'country',
           value: 'Страна',
+          isSortable: false,
         },
         {
           key: 'isDead',
           value: 'Остановлен',
+          isSortable: false,
         },
         {
           key: 'A',
           value: 'Адрес',
+          isSortable: false,
         },
         {
           key: 'NS',
           value: 'Имя сервера',
+          isSortable: false,
         },
         {
           key: 'CNAME',
           value: 'Псевдоним',
+          isSortable: false,
         },
         {
           key: 'MX',
           value: 'Почтовый адрес',
+          isSortable: false,
         },
         {
           key: 'TXT',
           value: 'Запись',
+          isSortable: false,
         },
       ],
       loading: true,
@@ -162,13 +172,17 @@ export default {
       });
   },
   methods: {
-    sort(col) {
-      if (this.sortKey === col) {
-        this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-      } else {
-        this.sortKey = col;
+    sort(index) {
+      const col = this.domainColumns[index].key;
+      if (this.domainColumns[index].isSortable) {
+        if (this.sortKey === col) {
+          this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+          this.sortKey = col;
+        }
+        return this.domainsList.sort(this.sortBy(col, this.sortDirection));
       }
-      return this.domainsList.sort(this.sortBy(col, this.sortDirection));
+      return this.domainsList;
     },
     sortBy(property, order) {
       this.sortDirection = order;
