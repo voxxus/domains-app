@@ -13,25 +13,7 @@
       <AppDataTable
         :data-list="filteredDomains"
         :data-columns="domainColumns"
-        :sort-key="sortKey"
-        :sort-dir="sortDirection"
-        @sortColumn="sort"
       >
-        <template #domain="{domain}">
-          {{ domain.domain }}
-        </template>
-        <template #create_date="{domain}">
-          {{ domain.create_date }}
-        </template>
-        <template #update_date="{domain}">
-          {{ domain.update_date }}
-        </template>
-        <template #country="{domain}">
-          {{ domain.country }}
-        </template>
-        <template #isDead="{domain}">
-          {{ domain.isDead }}
-        </template>
         <template #A="{domain}">
           <AppList v-if="domain.A" :items="domain.A">
             <template #item="{item}">
@@ -97,58 +79,76 @@ export default {
         {
           key: 'domain',
           value: 'Домен',
+          placeholder: 'Поиск по домену',
+          search: '',
           isSortable: true,
         },
         {
           key: 'create_date',
           value: 'Дата создания',
+          placeholder: 'Поиск по дате создания',
+          search: '',
           isSortable: true,
         },
         {
           key: 'update_date',
           value: 'Дата обновления',
+          placeholder: 'Поиск по дате обновления',
+          search: '',
           isSortable: true,
         },
         {
           key: 'country',
           value: 'Страна',
+          placeholder: 'Поиск по стране',
+          search: '',
           isSortable: false,
         },
         {
           key: 'isDead',
           value: 'Остановлен',
+          placeholder: 'Поиск по статусу работы',
+          search: '',
           isSortable: false,
         },
         {
           key: 'A',
           value: 'Адрес',
+          placeholder: 'Поиск по IP-адресу',
+          search: '',
           isSortable: false,
         },
         {
           key: 'NS',
           value: 'Имя сервера',
+          placeholder: 'Поиск по имени сервера',
+          search: '',
           isSortable: false,
         },
         {
           key: 'CNAME',
           value: 'Псевдоним',
+          placeholder: 'Поиск по псевдониму',
+          search: '',
           isSortable: false,
         },
         {
           key: 'MX',
           value: 'Почтовый адрес',
+          placeholder: 'Поиск по почтовому адресу',
+          search: '',
           isSortable: false,
         },
         {
           key: 'TXT',
           value: 'Запись',
+          placeholder: 'Поиск по записи',
+          search: '',
           isSortable: false,
         },
       ],
       loading: true,
       search: '',
-      sortDirection: 'asc',
-      sortKey: '',
     };
   },
   created() {
@@ -171,34 +171,7 @@ export default {
         this.loading = false;
       });
   },
-  methods: {
-    sort(index) {
-      const col = this.domainColumns[index].key;
-      if (this.domainColumns[index].isSortable) {
-        if (this.sortKey === col) {
-          this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-          this.sortKey = col;
-        }
-        return this.domainsList.sort(this.sortBy(col, this.sortDirection));
-      }
-      return this.domainsList;
-    },
-    sortBy(property, order) {
-      this.sortDirection = order;
-      return function (a, b) {
-        const varA = typeof a[property] === 'string' ? a[property].toUpperCase() : a[property];
-        const varB = typeof b[property] === 'string' ? b[property].toUpperCase() : b[property];
-        let comparison = 0;
-        if (varA > varB) {
-          comparison = 1;
-        } else if (varA < varB) {
-          comparison = -1;
-        }
-        return order === 'desc' ? comparison * -1 : comparison;
-      };
-    },
-  },
+  methods: {},
   computed: {
     filteredDomains() {
       const searchStr = this.search.toLowerCase();

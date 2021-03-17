@@ -7,20 +7,34 @@
             :key="index"
             class="data-table__header"
             :class="{active: sortKey === column.key, sortable: column.isSortable}"
-            @click="$emit('sortColumn', index)"
+            @click="sort(index)"
         >
           {{ column.value }}
           <span class="data-table__arrow"
-                :class="{asc: sortDir === 'asc' && sortKey === column.key,
-                desc: sortDir === 'desc' && sortKey === column.key }"></span>
+                :class="{asc: sortDirection === 'asc' && sortKey === column.key,
+                desc: sortDirection === 'desc' && sortKey === column.key }"></span>
         </th>
       </tr>
       </thead>
       <tbody>
       <template v-if="dataList.length">
+        <tr>
+          <td v-for="(column, index) in dataColumns" :key="index" class="data-table__data">
+            <AppInput
+              v-model="search"
+              :placeholder="column.placeholder"
+              :value="search"
+            />
+          </td>
+        </tr>
         <tr v-for="(listItem, index) in dataList" :key="index">
           <td v-for="(column, index) in dataColumns" :key="index" class="data-table__data">
-            <slot :name="column.key" :domain="listItem" :index="index"/>
+            <slot :name="column.key"
+                  :domain="listItem"
+                  :index="index"
+            >
+              {{ listItem[column.key] }}
+            </slot>
           </td>
         </tr>
       </template>
@@ -40,11 +54,20 @@
 
 <script>
 import EmptyList from '@/components/EmptyList.vue';
+import AppInput from '@/components/AppInput.vue';
 
 export default {
   name: 'AppDataTable',
   components: {
     EmptyList,
+    AppInput,
+  },
+  data() {
+    return {
+      sortDirection: 'asc',
+      sortKey: '',
+      search: '',
+    };
   },
   props: {
     dataList: {
@@ -55,14 +78,36 @@ export default {
       type: Array,
       default: () => [],
     },
-    sortKey: {
-      type: String,
-      default: () => '',
+  },
+  methods: {
+    sort(index) {
+      const col = this.dataColumns[index].key;
+      if (this.dataColumns[index].isSortable) {
+        if (this.sortKey === col) {
+          this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+          this.sortKey = col;
+        }
+        return this.dataList.sort(this.sortBy(col, this.sortDirection));
+      }
+      return this.dataList;
     },
-    sortDir: {
-      type: String,
-      default: () => '',
+    sortBy(property, order) {
+      this.sortDirection = order;
+      return (a, b) => {
+        const varA = typeof a[property] === 'string' ? a[property].toUpperCase() : a[property];
+        const varB = typeof b[property] === 'string' ? b[property].toUpperCase() : b[property];
+        let comparison = 0;
+        if (varA > varB) {
+          comparison = 1;
+        } else if (varA < varB) {
+          comparison = -1;
+        }
+        return order === 'desc' ? comparison * -1 : comparison;
+      };
     },
+  },
+  computed: {
   },
 };
 </script>
