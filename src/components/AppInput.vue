@@ -4,6 +4,7 @@
       class="input"
       :placeholder="placeholder"
       :value="value"
+      @input="$emit('input', $event.target.value)"
     >
   </label>
 </template>
@@ -19,6 +20,10 @@ export default {
     value: {
       type: String,
       default: '',
+    },
+    index: {
+      type: Number,
+      default: 0,
     },
   },
 };

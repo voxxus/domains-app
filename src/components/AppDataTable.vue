@@ -21,9 +21,10 @@
         <tr>
           <td v-for="(column, index) in dataColumns" :key="index" class="data-table__data">
             <AppInput
-              v-model="search"
+              v-model="column.search"
               :placeholder="column.placeholder"
-              :value="search"
+              :index="index"
+              @input="filterList"
             />
           </td>
         </tr>
@@ -59,8 +60,7 @@ import AppInput from '@/components/AppInput.vue';
 export default {
   name: 'AppDataTable',
   components: {
-    EmptyList,
-    AppInput,
+    EmptyList, AppInput,
   },
   data() {
     return {
@@ -105,6 +105,20 @@ export default {
         }
         return order === 'desc' ? comparison * -1 : comparison;
       };
+    },
+    filterList(value, index) {
+      debugger;
+      // const search = this.dataColumns[index].search.toLowerCase();
+      const dataKey = this.dataColumns[index].key;
+      // eslint-disable-next-line consistent-return
+      return this.dataList.filter((item) => {
+        if (typeof item[dataKey] === 'string') {
+          if (item[dataKey].indexOf(value) > -1) {
+            console.log(item);
+            return item;
+          }
+        }
+      });
     },
   },
   computed: {

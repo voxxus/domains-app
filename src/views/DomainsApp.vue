@@ -11,7 +11,7 @@
         </label>
       </div>
       <AppDataTable
-        :data-list="filteredDomains"
+        :data-list="domainsList"
         :data-columns="domainColumns"
       >
         <template #A="{domain}">
