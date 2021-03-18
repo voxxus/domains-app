@@ -1,6 +1,6 @@
 <template>
   <div class="empty">
-    <slot name="emptyList">Нет данных</slot>
+    Нет данных
   </div>
 </template>
 

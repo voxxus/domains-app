@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <TheHeader/>
+    <TheHeader class="header"/>
     <router-view/>
   </div>
 </template>
@@ -23,7 +23,10 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
   box-sizing: border-box;
+}
+
+.header {
+  font-size: 36px;
 }
 </style>

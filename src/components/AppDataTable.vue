@@ -17,17 +17,18 @@
       </tr>
       </thead>
       <tbody>
-      <template v-if="dataList.length">
-        <tr>
-          <td v-for="(column, index) in dataColumns" :key="index" class="data-table__data">
-            <AppInput
-              v-model="search"
-              :placeholder="column.placeholder"
-              :value="search"
-            />
-          </td>
-        </tr>
-        <tr v-for="(listItem, index) in dataList" :key="index">
+      <tr>
+        <td v-for="(column, index) in dataColumns" :key="index" class="data-table__data">
+          <AppInput
+            v-model="column.search"
+            :placeholder="column.placeholder"
+            :index="index"
+            @focus="currentIndex = index"
+          />
+        </td>
+      </tr>
+      <template v-if="filteredList.length">
+        <tr v-for="(listItem, index) in filteredList" :key="index">
           <td v-for="(column, index) in dataColumns" :key="index" class="data-table__data">
             <slot :name="column.key"
                   :domain="listItem"
@@ -41,13 +42,18 @@
       <template v-else>
         <tr>
           <td :colspan="dataColumns.length">
-            <EmptyList>
-              <template #emptyList/>
-            </EmptyList>
+            <EmptyList/>
           </td>
         </tr>
       </template>
       </tbody>
+      <tfoot v-if="filteredList.length">
+      <tr>
+        <td :colspan="dataColumns.length" class="data-table__footer">
+          Кол-во доменов: {{ filteredList.length }}
+        </td>
+      </tr>
+      </tfoot>
     </table>
   </div>
 </template>
@@ -59,14 +65,13 @@ import AppInput from '@/components/AppInput.vue';
 export default {
   name: 'AppDataTable',
   components: {
-    EmptyList,
     AppInput,
+    EmptyList,
   },
   data() {
     return {
       sortDirection: 'asc',
       sortKey: '',
-      search: '',
     };
   },
   props: {
@@ -108,6 +113,40 @@ export default {
     },
   },
   computed: {
+    filteredList() {
+      const filledSearch = this.dataColumns.filter((item) => item.search);
+      if (!filledSearch.length) {
+        return this.dataList;
+      }
+      let result = this.dataList;
+      filledSearch.forEach((val) => {
+        // eslint-disable-next-line consistent-return
+        result = result.filter((item) => {
+          if (typeof item[val.key] === 'string') {
+            if (item[val.key].toLowerCase()
+              .includes(val.search.toLowerCase())) {
+              return item;
+            }
+          } else if (Array.isArray(item[val.key])) {
+            // eslint-disable-next-line no-restricted-syntax,guard-for-in
+            for (const el in item[val.key]) {
+              if (typeof item[val.key][el] === 'object' && Object.values(item[val.key][el])
+                .join(' - ')
+                .toLowerCase()
+                .includes(val.search.toLowerCase())) {
+                return item;
+              }
+            }
+            if (item[val.key].join(', ')
+              .toLowerCase()
+              .includes(val.search.toLowerCase())) {
+              return item;
+            }
+          }
+        });
+      });
+      return result;
+    },
   },
 };
 </script>
@@ -118,7 +157,7 @@ export default {
   border: 1px solid #747678;
   border-radius: 3px;
   background-color: #eee;
-  margin: 5px auto;
+  margin: 30px auto 5px;
   width: 1500px;
 
   &__header {
@@ -174,6 +213,13 @@ export default {
     max-width: 120px;
     padding: 10px;
     font-size: 12px;
+  }
+
+  &__footer {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: right;
+    padding: 10px;
   }
 }
 </style>

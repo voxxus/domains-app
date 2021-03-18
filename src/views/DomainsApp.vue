@@ -5,13 +5,8 @@
     </div>
     <Loader v-if="loading"/>
     <div v-else-if="domainsList.length" class="table-wrapper">
-      <div class="data-input">
-        <label for="search">
-          Поиск доменов: <input id="search" class="input" v-model="search">
-        </label>
-      </div>
       <AppDataTable
-        :data-list="filteredDomains"
+        :data-list="domainsList"
         :data-columns="domainColumns"
       >
         <template #A="{domain}">
@@ -51,9 +46,7 @@
         </template>
       </AppDataTable>
     </div>
-    <EmptyList v-else>
-      <template #emptyList/>
-    </EmptyList>
+    <EmptyList v-else/>
   </div>
 </template>
 
@@ -95,7 +88,7 @@ export default {
           value: 'Дата обновления',
           placeholder: 'Поиск по дате обновления',
           search: '',
-          isSortable: true,
+          isSortable: false,
         },
         {
           key: 'country',
@@ -171,54 +164,5 @@ export default {
         this.loading = false;
       });
   },
-  methods: {},
-  computed: {
-    filteredDomains() {
-      const searchStr = this.search.toLowerCase();
-      // eslint-disable-next-line consistent-return
-      return this.domainsList.filter((item) => {
-        if (item.domain.indexOf(searchStr) > -1
-          || item.create_date.toLowerCase()
-            .indexOf(searchStr) > -1
-          || item.update_date.toLowerCase()
-            .indexOf(searchStr) > -1
-          || item.country.toLowerCase()
-            .indexOf(searchStr) > -1
-          || item.isDead.toLowerCase()
-            .indexOf(searchStr) > -1
-          || item.A.join(', ')
-            .indexOf(searchStr) > -1
-          || item.NS.join(', ')
-            .indexOf(searchStr) > -1
-          || item.CNAME.join(', ')
-            .indexOf(searchStr) > -1
-          || item.TXT.join(', ')
-            .indexOf(searchStr) > -1) {
-          return item;
-        }
-        // eslint-disable-next-line no-restricted-syntax
-        for (const val in item.MX) {
-          if (Object.values(item.MX[val])
-            .join(' - ')
-            .indexOf(searchStr) > -1) {
-            return item;
-          }
-        }
-      });
-    },
-  },
 };
 </script>
-
-<style scoped lang="scss">
-.data-input {
-  text-align: left;
-  margin-left: 10px;
-
-  .input {
-    margin-top: 30px;
-    margin-left: 5px;
-    padding: 5px;
-  }
-}
-</style>
