@@ -75,7 +75,7 @@ export default {
   },
   data() {
     return {
-      sortDirection: '',
+      sortDirection: 'asc',
       sortKey: '',
     };
   },
