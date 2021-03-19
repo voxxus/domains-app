@@ -157,7 +157,7 @@ export default {
   border: 1px solid #747678;
   border-radius: 3px;
   background-color: #eee;
-  margin: 30px auto 5px;
+  margin: 30px auto;
   width: 1500px;
 
   &__header {
@@ -209,10 +209,10 @@ export default {
   }
 
   &__header, &__data {
-    min-width: 70px;
-    max-width: 120px;
+    min-width: 150px;
+    max-width: 150px;
     padding: 10px;
-    font-size: 12px;
+    font-size: 13px;
   }
 
   &__footer {

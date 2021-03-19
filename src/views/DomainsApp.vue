@@ -3,8 +3,8 @@
     <div>
       <router-link to="/">Главная</router-link>
     </div>
-    <Loader v-if="loading"/>
-    <div v-else-if="domainsList.length" class="table-wrapper">
+    <Loader v-if="loading" class="loader"/>
+    <div v-else-if="domainsList" class="table-wrapper">
       <AppDataTable
         :data-list="domainsList"
         :data-columns="domainColumns"
@@ -46,7 +46,7 @@
         </template>
       </AppDataTable>
     </div>
-    <EmptyList v-else/>
+    <EmptyList v-else-if="domainsList === null" class="empty"/>
   </div>
 </template>
 
@@ -88,56 +88,56 @@ export default {
           value: 'Дата обновления',
           placeholder: 'Поиск по дате обновления',
           search: '',
-          isSortable: false,
+          isSortable: true,
         },
         {
           key: 'country',
           value: 'Страна',
           placeholder: 'Поиск по стране',
           search: '',
-          isSortable: false,
+          isSortable: true,
         },
         {
           key: 'isDead',
           value: 'Остановлен',
           placeholder: 'Поиск по статусу работы',
           search: '',
-          isSortable: false,
+          isSortable: true,
         },
         {
           key: 'A',
           value: 'Адрес',
           placeholder: 'Поиск по IP-адресу',
           search: '',
-          isSortable: false,
+          isSortable: true,
         },
         {
           key: 'NS',
           value: 'Имя сервера',
           placeholder: 'Поиск по имени сервера',
           search: '',
-          isSortable: false,
+          isSortable: true,
         },
         {
           key: 'CNAME',
           value: 'Псевдоним',
           placeholder: 'Поиск по псевдониму',
           search: '',
-          isSortable: false,
+          isSortable: true,
         },
         {
           key: 'MX',
           value: 'Почтовый адрес',
           placeholder: 'Поиск по почтовому адресу',
           search: '',
-          isSortable: false,
+          isSortable: true,
         },
         {
           key: 'TXT',
           value: 'Запись',
           placeholder: 'Поиск по записи',
           search: '',
-          isSortable: false,
+          isSortable: true,
         },
       ],
       loading: true,
@@ -149,20 +149,28 @@ export default {
       .get('http://localhost:8080/v1/domains/search')
       .then((response) => {
         this.domainsList = response.data.domains.map((item) => {
-          item.country === null ? item.country = '-' : item.country;
-          item.A === null ? item.A = ['-'] : item.NS;
-          item.NS === null ? item.NS = ['-'] : item.NS;
-          item.CNAME === null ? item.CNAME = ['-'] : item.CNAME;
-          item.MX === null ? item.MX = ['-'] : item.MX;
-          item.TXT === null ? item.TXT = ['-'] : item.TXT;
+          this.domainColumns.forEach((column) => {
+            if (typeof item[column.key] === 'string' || column.key === 'country') {
+              item[column.key] === null ? item[column.key] = '-' : item[column.key];
+            } else if (typeof item[column.key] === 'object') {
+              item[column.key] === null ? item[column.key] = ['-'] : item[column.key];
+            }
+          });
           return item;
         });
         this.loading = false;
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
         this.loading = false;
       });
   },
 };
 </script>
+
+<style scoped lang="scss">
+.empty, .loader {
+  margin-top: 25vh;
+  font-size: 36px;
+}
+</style>
