@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <TheHeader class="header"/>
-    <router-view/>
+      <router-view class="link"/>
   </div>
 </template>
 
@@ -28,5 +28,9 @@ export default {
 
 .header {
   font-size: 36px;
+}
+
+.link {
+  font-size: 25px;
 }
 </style>

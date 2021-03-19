@@ -10,9 +10,14 @@
             @click="sort(index)"
         >
           {{ column.value }}
-          <span class="data-table__arrow"
-                :class="{asc: sortDirection === 'asc' && sortKey === column.key,
-                desc: sortDirection === 'desc' && sortKey === column.key }"></span>
+          <div v-if="column.isSortable" class="arrows">
+            <span class="arrow-up"
+                  :class="{active: sortDirection === 'asc' &&
+                   sortKey === column.key}"/>
+            <span class="arrow-down"
+                  :class="{active: sortDirection === 'desc' &&
+                  sortKey === column.key}"/>
+          </div>
         </th>
       </tr>
       </thead>
@@ -59,8 +64,8 @@
 </template>
 
 <script>
-import EmptyList from '@/components/EmptyList.vue';
 import AppInput from '@/components/AppInput.vue';
+import EmptyList from '@/components/EmptyList.vue';
 
 export default {
   name: 'AppDataTable',
@@ -70,7 +75,7 @@ export default {
   },
   data() {
     return {
-      sortDirection: 'asc',
+      sortDirection: '',
       sortKey: '',
     };
   },
@@ -168,51 +173,52 @@ export default {
     -ms-user-select: none;
     user-select: none;
     width: 150px;
+    font-size: 17px;
   }
 
-  &__arrow {
+  .arrows {
     display: inline-block;
     vertical-align: middle;
+  }
+
+  .arrow-up, .arrow-down {
+    display: block;
     width: 0;
     height: 0;
     margin-left: 5px;
+    margin-bottom: 2px;
     opacity: 0.66;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
   }
 
-  &__arrow.asc {
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-bottom: 4px solid #fff;
+  .arrow-up {
+    border-bottom: 5px solid #fff;
   }
 
-  &__arrow.desc {
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 4px solid #fff;
+  .arrow-down {
+    border-top: 5px solid #fff;
   }
 
   .active {
-    color: rgba(255, 255, 255, 1);
+    opacity: 1;
+    color: #ffffff;
   }
 
   .sortable {
     cursor: pointer;
   }
 
-  .active .data-table__arrow {
-    opacity: 1;
-  }
-
   &__data {
     background-color: #f9f9f9;
     overflow-wrap: break-word;
+    font-size: 13px;
   }
 
   &__header, &__data {
-    min-width: 150px;
-    max-width: 150px;
+    min-width: 170px;
+    max-width: 170px;
     padding: 10px;
-    font-size: 13px;
   }
 
   &__footer {
