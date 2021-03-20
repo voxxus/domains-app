@@ -46,7 +46,11 @@
         </template>
       </AppDataTable>
     </div>
-    <EmptyList v-else-if="domainsList === null" class="empty"/>
+    <EmptyList v-else-if="domainsList === null" class="empty">
+      <template #noData>
+        Ошибка! Не удалось загрузить список доменов
+      </template>
+    </EmptyList>
   </div>
 </template>
 
@@ -141,7 +145,6 @@ export default {
         },
       ],
       loading: true,
-      search: '',
     };
   },
   created() {
@@ -158,12 +161,9 @@ export default {
           });
           return item;
         });
-        this.loading = false;
       })
-      .catch((error) => {
-        console.error(error);
-        this.loading = false;
-      });
+      .catch((error) => console.log(error))
+      .finally(() => this.loading = false);
   },
 };
 </script>
@@ -171,6 +171,6 @@ export default {
 <style scoped lang="scss">
 .empty, .loader {
   margin-top: 25vh;
-  font-size: 36px;
+  font-size: 30px;
 }
 </style>

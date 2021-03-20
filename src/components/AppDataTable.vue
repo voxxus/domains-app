@@ -11,12 +11,12 @@
         >
           {{ column.value }}
           <div v-if="column.isSortable" class="arrows">
-            <span class="arrow-up"
-                  :class="{active: sortDirection === 'asc' &&
-                   sortKey === column.key}"/>
+              <span class="arrow-up"
+                    :class="{active: sortDirection === 'asc' &&
+                     sortKey === column.key}"/>
             <span class="arrow-down"
                   :class="{active: sortDirection === 'desc' &&
-                  sortKey === column.key}"/>
+                    sortKey === column.key}"/>
           </div>
         </th>
       </tr>
@@ -27,8 +27,6 @@
           <AppInput
             v-model="column.search"
             :placeholder="column.placeholder"
-            :index="index"
-            @focus="currentIndex = index"
           />
         </td>
       </tr>
@@ -47,7 +45,11 @@
       <template v-else>
         <tr>
           <td :colspan="dataColumns.length">
-            <EmptyList/>
+            <EmptyList>
+              <template #noData>
+                Нет совпадений
+              </template>
+            </EmptyList>
           </td>
         </tr>
       </template>
@@ -120,9 +122,7 @@ export default {
   computed: {
     filteredList() {
       const filledSearch = this.dataColumns.filter((item) => item.search);
-      if (!filledSearch.length) {
-        return this.dataList;
-      }
+      if (!filledSearch.length) return this.dataList;
       let result = this.dataList;
       filledSearch.forEach((val) => {
         // eslint-disable-next-line consistent-return
@@ -162,7 +162,7 @@ export default {
   border: 1px solid #747678;
   border-radius: 3px;
   background-color: #eee;
-  margin: 30px auto;
+  margin: 50px auto;
   width: 1500px;
 
   &__header {
@@ -173,7 +173,7 @@ export default {
     -ms-user-select: none;
     user-select: none;
     width: 150px;
-    font-size: 17px;
+    font-size: 14px;
   }
 
   .arrows {
@@ -188,16 +188,16 @@ export default {
     margin-left: 5px;
     margin-bottom: 2px;
     opacity: 0.66;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
   }
 
   .arrow-up {
-    border-bottom: 5px solid #fff;
+    border-bottom: 4px solid #fff;
   }
 
   .arrow-down {
-    border-top: 5px solid #fff;
+    border-top: 4px solid #fff;
   }
 
   .active {
@@ -212,12 +212,12 @@ export default {
   &__data {
     background-color: #f9f9f9;
     overflow-wrap: break-word;
-    font-size: 13px;
+    font-size: 12px;
   }
 
   &__header, &__data {
-    min-width: 170px;
-    max-width: 170px;
+    min-width: 150px;
+    max-width: 150px;
     padding: 10px;
   }
 

@@ -27,10 +27,10 @@ export default {
 }
 
 .header {
-  font-size: 36px;
+  font-size: 25px;
 }
 
 .link {
-  font-size: 25px;
+  font-size: 20px;
 }
 </style>

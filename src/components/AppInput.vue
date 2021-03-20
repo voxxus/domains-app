@@ -27,7 +27,7 @@ export default {
 
 <style scoped>
 .input {
-  min-width: 90%;
+  max-width: 140px;
   padding: 5px;
   font-size: 12px;
   text-align: center;
